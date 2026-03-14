@@ -22,3 +22,39 @@ alter table produto alter column descricao type varchar(200);
 
 
 drop table produto;
+
+select
+	ped.id pedido_id,
+	cli.id cliente_id,
+	cli.nome,
+	prod.nomeproduto
+from
+	pedidos ped 
+inner join clientes cli on ped.clienteid = cli.id
+inner join produtos prod on prod.id = ped.produtoid
+where
+	cli.id = 1;
+
+select
+	cli.id clienteid,
+	cli.nome,
+	ped.id pedidoid
+from
+	clientes cli 
+left join pedidos ped on cli.id = ped.clienteid;
+
+select 
+	prod.id produto_id, 
+	prod.nomeproduto,
+	ped.id pedido_id
+from 
+	pedidos ped 
+right join produtos prod on ped.produtoid = prod.id;
+
+select 
+	prod.id produto_id, 
+	prod.nomeproduto,
+	ped.id pedido_id
+from 
+	produtos prod 
+left join pedidos ped on ped.produtoid = prod.id;
