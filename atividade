@@ -1,60 +1,72 @@
-create database supermercado;
+CREATE DATABASE supermercado;
 
-create table cliente ( 
-id int not null,
-nome varchar(50) not null,
-cpf varchar(11) not null,
-constraint pk_id_cliente primary key (id)
+CREATE TABLE clientes (
+    id INT NOT NULL,
+    nome VARCHAR(50) NOT NULL,
+    cpf VARCHAR(11) NOT NULL,
+    CONSTRAINT pk_clientes PRIMARY KEY (id)
 );
 
-create table  produto(
-id int not null,
-descricao varchar(100) not null,
-cod_barras varchar(14),
-valor decimal(16,2)
+CREATE TABLE produtos (
+    id INT NOT NULL,
+    nomeproduto VARCHAR(200) NOT NULL,
+    cod_barras VARCHAR(14),
+    valor DECIMAL(16,2),
+    situacao BOOLEAN NOT NULL,
+    CONSTRAINT pk_produtos PRIMARY KEY (id)
 );
 
-alter table produto add constraint pk_id_produto primary key (id);
+CREATE TABLE pedidos (
+    id INT NOT NULL,
+    clienteid INT,
+    produtoid INT,
+    CONSTRAINT pk_pedidos PRIMARY KEY (id),
+    CONSTRAINT fk_cliente FOREIGN KEY (clienteid) REFERENCES clientes(id),
+    CONSTRAINT fk_produto FOREIGN KEY (produtoid) REFERENCES produtos(id)
+);
 
-alter table produto add column situacao boolean not null;
+INSERT INTO clientes (id, nome, cpf)
+VALUES
+(1, 'João', '12345678900'),
+(2, 'Maria', '98765432100');
 
-alter table produto alter column descricao type varchar(200);
+INSERT INTO produtos (id, nomeproduto, cod_barras, valor, situacao)
+VALUES
+(1, 'Arroz 5kg', '7891234567890', 25.90, true),
+(2, 'Feijão 1kg', '7891234567891', 8.50, true);
 
+INSERT INTO pedidos (id, clienteid, produtoid)
+VALUES
+(1, 1, 1),
+(2, 2, 2);
 
-drop table produto;
+SELECT
+    ped.id AS pedido_id,
+    cli.id AS cliente_id,
+    cli.nome,
+    prod.nomeproduto
+FROM pedidos ped
+INNER JOIN clientes cli ON ped.clienteid = cli.id
+INNER JOIN produtos prod ON prod.id = ped.produtoid
+WHERE cli.id = 1;
 
-select
-	ped.id pedido_id,
-	cli.id cliente_id,
-	cli.nome,
-	prod.nomeproduto
-from
-	pedidos ped 
-inner join clientes cli on ped.clienteid = cli.id
-inner join produtos prod on prod.id = ped.produtoid
-where
-	cli.id = 1;
+SELECT
+    cli.id AS clienteid,
+    cli.nome,
+    ped.id AS pedidoid
+FROM clientes cli
+LEFT JOIN pedidos ped ON cli.id = ped.clienteid;
 
-select
-	cli.id clienteid,
-	cli.nome,
-	ped.id pedidoid
-from
-	clientes cli 
-left join pedidos ped on cli.id = ped.clienteid;
+SELECT
+    prod.id AS produto_id,
+    prod.nomeproduto,
+    ped.id AS pedido_id
+FROM pedidos ped
+RIGHT JOIN produtos prod ON ped.produtoid = prod.id;
 
-select 
-	prod.id produto_id, 
-	prod.nomeproduto,
-	ped.id pedido_id
-from 
-	pedidos ped 
-right join produtos prod on ped.produtoid = prod.id;
-
-select 
-	prod.id produto_id, 
-	prod.nomeproduto,
-	ped.id pedido_id
-from 
-	produtos prod 
-left join pedidos ped on ped.produtoid = prod.id;
+SELECT
+    prod.id AS produto_id,
+    prod.nomeproduto,
+    ped.id AS pedido_id
+FROM produtos prod
+LEFT JOIN pedidos ped ON ped.produtoid = prod.id;
