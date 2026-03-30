@@ -70,3 +70,84 @@ SELECT
     ped.id AS pedido_id
 FROM produtos prod
 LEFT JOIN pedidos ped ON ped.produtoid = prod.id;
+
+SELECT nome FROM clientes
+UNION
+SELECT nomeproduto FROM produtos;
+
+SELECT nome FROM clientes
+UNION ALL
+SELECT nomeproduto FROM produtos;
+
+SELECT id FROM clientes
+INTERSECT
+SELECT id FROM pedidos;
+
+SELECT id FROM clientes
+EXCEPT
+SELECT clienteid FROM pedidos;
+
+SELECT
+    nome,
+    UPPER(nome) AS nome_maiusculo,
+    LOWER(nome) AS nome_minusculo,
+    LENGTH(nome) AS tamanho_nome
+FROM clientes;
+
+SELECT
+    nomeproduto,
+    UPPER(nomeproduto) AS produto_maiusculo,
+    LOWER(nomeproduto) AS produto_minusculo,
+    LENGTH(nomeproduto) AS tamanho_produto,
+    ROUND(valor, 1) AS valor_arredondado
+FROM produtos;
+
+SELECT COUNT(*) AS total_clientes
+FROM clientes;
+
+SELECT COUNT(*) AS total_produtos
+FROM produtos;
+
+SELECT SUM(valor) AS soma_valores
+FROM produtos;
+
+SELECT AVG(valor) AS media_valores
+FROM produtos;
+
+SELECT MAX(valor) AS maior_valor
+FROM produtos;
+
+SELECT MIN(valor) AS menor_valor
+FROM produtos;
+
+SELECT
+    situacao,
+    COUNT(*) AS quantidade_produtos
+FROM produtos
+GROUP BY situacao;
+
+SELECT
+    clienteid,
+    COUNT(*) AS total_pedidos
+FROM pedidos
+GROUP BY clienteid;
+
+SELECT
+    produtoid,
+    COUNT(*) AS total_vendido
+FROM pedidos
+GROUP BY produtoid;
+
+SELECT
+    prod.nomeproduto,
+    COUNT(ped.id) AS total_pedidos
+FROM produtos prod
+LEFT JOIN pedidos ped ON prod.id = ped.produtoid
+GROUP BY prod.nomeproduto;
+
+SELECT
+    cli.nome,
+    COUNT(ped.id) AS total_pedidos
+FROM clientes cli
+LEFT JOIN pedidos ped ON cli.id = ped.clienteid
+GROUP BY cli.nome;
